@@ -1,0 +1,13 @@
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/RinhaBackend2026Application.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/bean/FraudRequest.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/bean/FraudResponse.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/bean/Normalizations.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/config/DbConfig.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/controller/FraudController.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/dto/Fraud.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/enums/LoadStatus.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/listener/StartupApplicationListener.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/property/ApplicationProperties.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/repository/FraudRepository.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/repository/LoadControlRepository.java
+/home/hildebrando/projetos/rinha-backend-2026-java-v1/src/main/java/br/com/hfurlan/rinhabackend2026/service/FraudService.java

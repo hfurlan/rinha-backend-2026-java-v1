@@ -1,0 +1,41 @@
+server:
+  port: 9999
+  tomcat:
+    threads:
+      max: 10    # Maximum number of HTTP threads
+      min-spare: 10  # Minimum number of spare threads
+
+spring:
+  application:
+    name: rinha-backend-2026
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:rinha}
+    username: ${DB_USER:rinha}
+    password: ${DB_PASSWORD:rinha}
+    hikari:
+      maximum-pool-size: 11
+      minimum-idle: 11
+      auto-commit: true
+#      connection-timeout: 180000
+#      idle-timeout: 60000
+#      max-lifetime: 1800000
+#      validation-timeout: 3000
+#      leak-detection-threshold: 2000
+#      initialization-fail-timeout: 10000
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+
+application:
+  mcc-risk-file-path: ${user.dir}/load/mcc_risk.json
+  normalization-file-path: ${user.dir}/load/normalization.json
+  fraud-references-file-path: ${user.dir}/load/references.json.gz
+  process-new-frauds: false
+
+logging:
+  level:
+    ROOT: INFO

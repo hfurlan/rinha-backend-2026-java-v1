@@ -1,0 +1,27 @@
+server:
+  port: 9999
+  tomcat:
+    threads:
+      max: 10
+
+spring:
+  application:
+    name: rinha-backend-2026
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:rinha}
+    username: ${DB_USER:rinha}
+    password: ${DB_PASSWORD:rinha}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 10
+
+rinha:
+  processor-default-url: ${PROCESSOR_DEFAULT_URL:http://localhost:8001}
+  processor-fallback-url: ${PROCESSOR_DEFAULT_URL:http://localhost:8002}
+  payment-processor-availability-scheduller-enabled: true
+  payment-processor-retry-scheduller-enabled: true
+
+logging:
+  level:
+    ROOT: WARN

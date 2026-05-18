@@ -1,0 +1,8 @@
+application:
+  mcc-risk-file-path: classpath:/mcc_risk.json
+  normalization-file-path: classpath:/normalization.json
+  fraud-references-file-path: classpath:/references-for-unit-test.json.gz
+
+logging:
+  level:
+    ROOT: INFO

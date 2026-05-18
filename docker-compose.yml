@@ -1,0 +1,132 @@
+services:
+  db:
+    image: pgvector/pgvector:pg18-trixie
+    hostname: db
+    environment:
+      - POSTGRES_PASSWORD=rinha
+      - POSTGRES_USER=rinha
+      - POSTGRES_DB=rinha
+    ports:
+      - "5432:5432"
+#    command: postgres -c max_connections=30 -c shared_buffers=32MB -c effective_cache_size=96MB -c work_mem=3MB -c maintenance_work_mem=12MB -c synchronous_commit=off -c fsync=off
+    command: postgres -c max_connections=30
+    networks:
+      - rinha-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rinha -d rinha"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - ./sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ./sql/dml.sql:/docker-entrypoint-initdb.d/dml.sql
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1.00"
+#          memory: "300MB"
+
+  api01: &api
+    image: hfurlan/rinha-backend-2026-java-v1:0.0.1
+    hostname: api01
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=rinha
+      - DB_PASSWORD=rinha
+      - DB_NAME=rinha
+      - LOGGING_LEVEL_ROOT=WARN
+      - SERVER_TOMCAT_THREADS_MAX=5
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_HIKARY_MAXIMUM_POOL_SIZE=7
+      - SPRING_DATASOURCE_HIKARY_MINIMUM_IDLE=7
+      - APPLICATION_MCC_RISK_FILE_PATH=/tmp/mcc_risk.json
+      - APPLICATION_NORMALIZATION_FILE_PATH=/tmp/normalization.json
+      - APPLICATION_FRAUD_REFERENCES_FILE_PATH=/tmp/references.json.gz
+    ports:
+      - "8081:8080"
+    networks:
+      - rinha-net
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ready"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./load/mcc_risk.json:/tmp/mcc_risk.json
+      - ./load/normalization.json:/tmp/normalization.json
+      - ./load/references.json.gz:/tmp/references.json.gz
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "100MB"
+
+  api02:
+    <<: *api
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=rinha
+      - DB_PASSWORD=rinha
+      - DB_NAME=rinha
+      - LOGGING_LEVEL_ROOT=WARN
+      - SERVER_TOMCAT_THREADS_MAX=5
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_HIKARY_MAXIMUM_POOL_SIZE=5
+      - SPRING_DATASOURCE_HIKARY_MINIMUM_IDLE=5
+    hostname: api02
+    ports:
+      - "8082:8080"
+
+  lb:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "9999:9999"
+    networks:
+      - rinha-net
+    depends_on:
+      - api01
+      - api02
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "15MB"
+
+  grafana:
+    image: grafana/otel-lgtm:latest
+    environment:
+      - ENABLE_LOGS_GRAFANA=1
+      - ENABLE_LOGS_TEMPO=1
+    ports:
+      - "3000:3000"
+      - "3200:3200"
+      - "4040:4040"
+      - "4317:4317"
+      - "4318:4318"
+      - "9090:9090"
+    networks:
+      - rinha-net
+
+#  jaeger:
+#    image: jaegertracing/jaeger:latest
+#    container_name: jaeger
+#    ports:
+#      - "16686:16686" # the jaeger UI
+#      - "4317:4317" # the OpenTelemetry collector grpc
+#    environment:
+#      - COLLECTOR_OTLP_ENABLED=true
+#    networks:
+#      - rinha-net
+#    restart: always
+
+networks:
+  rinha-net:
+    driver: bridge
